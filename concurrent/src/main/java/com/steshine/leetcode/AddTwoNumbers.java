@@ -32,26 +32,29 @@ public class AddTwoNumbers {
                 sum += l2.val;
             }
                 sum += tmp.val;
-
+            //计算完成 指针后移
+            l1 = l1 != null ? l1.next : null;
+            l2 = l2 != null ? l2.next : null;
             int high = sum / 10;
             if (high > 0) {
                 tmp.val = sum % 10;
                 tmp.next = new ListNode(1);
             }else {
                 tmp.val = sum;
-                tmp.next =  new ListNode(0);
+                if(l1 != null|| l2 != null){
+                    tmp.next =  new ListNode(0);
+                }
             }
-            if(l1 == null || l2 == null || (l1.next == null && l2.next == null)){//todo 优化一下这个地方的逻辑
-                tmp.next = null;
+            //跳出条件
+            if((l1 == null && l2 == null)|| tmp.next == null){
                 break;
             }
-            l1 = l1.next;
-            l2 = l2.next;
             tmp = tmp.next;
 
         }
         return result;
     }
+
 
     public static void main(String[] args) {
         ListNode l3 = new AddTwoNumbers().addTwoNumbers(l1,l2);
