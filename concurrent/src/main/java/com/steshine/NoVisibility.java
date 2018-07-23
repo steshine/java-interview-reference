@@ -5,49 +5,50 @@ package com.steshine;
  */
 public class NoVisibility {
     private static boolean ready;
-    private  static  int number;
+    private static int number;
 
-    public  static int  getNumber() {
+    public static int getNumber() {
         return number;
     }
 
-    public  static void setNumber(int number) {
+    public static void setNumber(int number) {
         NoVisibility.number = number;
     }
 
-    private static class ReaderThread extends Thread{
+    private static class ReaderThread extends Thread {
         @Override
         public void run() {
-            while (ready){
+            while (ready) {
                 sleeps();
-                System.out.println(Thread.currentThread().getName()+": read "+getNumber());
+                System.out.println(Thread.currentThread().getName() + ": read " + getNumber());
             }
         }
     }
 
-    private static class WriteThread extends Thread{
+    private static class WriteThread extends Thread {
         @Override
         public void run() {
-            while (ready){
+            while (ready) {
                 sleeps();
-                setNumber(number+1);
-                System.out.println(Thread.currentThread().getName()+": write "+getNumber());
+                setNumber(number + 1);
+                System.out.println(Thread.currentThread().getName() + ": write " + getNumber());
             }
         }
     }
 
-    private static void sleeps(){
+    private static void sleeps() {
         try {
             Thread.sleep(100L);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
+
     public static void main(String[] args) {
 
         new ReaderThread().start();
         new WriteThread().start();
         number = 42;
-       ready = true;
+        ready = true;
     }
 }
