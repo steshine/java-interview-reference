@@ -4,10 +4,12 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashMap;
 
 public class Period implements Serializable {
     private final Date start;
     private final Date end;
+    private HashMap map = new HashMap();
 
     public Period(Date start, Date end) {
         this.start = new Date(start.getTime());
@@ -25,10 +27,13 @@ public class Period implements Serializable {
         return end;
     }
 
-   /* private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException {
+    private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException {
         s.defaultReadObject();
-        Object p =  s.readByte();
+        System.out.println("i am exert readObject");
+    }
 
-        System.out.println("i am exert "+ p);
-    }*/
+    private Object writeReplace() {
+        System.out.println("i am exert writeReplace");
+        return new Period(new Date(),new Date());
+    }
 }
