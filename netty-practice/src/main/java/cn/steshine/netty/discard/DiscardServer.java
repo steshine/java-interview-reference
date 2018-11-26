@@ -17,20 +17,20 @@ public class DiscardServer {
     }
 
     public void run() throws Exception {
-        EventLoopGroup bossGroup = new NioEventLoopGroup(); // (1)
-        EventLoopGroup workerGroup = new NioEventLoopGroup();
+        EventLoopGroup bossGroup = new NioEventLoopGroup(); // (1) accepting incoming connections
+        EventLoopGroup workerGroup = new NioEventLoopGroup(); // mapping channels
         try {
-            ServerBootstrap b = new ServerBootstrap(); // (2)
+            ServerBootstrap b = new ServerBootstrap(); // (2) set up helper class
             b.group(bossGroup, workerGroup)
-                    .channel(NioServerSocketChannel.class) // (3)
+                    .channel(NioServerSocketChannel.class) // (3) a instants to accept incoming connections
                     .childHandler(new ChannelInitializer<SocketChannel>() { // (4)
                         @Override
                         public void initChannel(SocketChannel ch) throws Exception {
-                            ch.pipeline().addLast(new DiscardServerHandler());
+                            ch.pipeline().addLast(new DiscardServerHandler()); // add some process handler
                         }
                     })
-                    .option(ChannelOption.SO_BACKLOG, 128)          // (5)
-                    .childOption(ChannelOption.SO_KEEPALIVE, true); // (6)
+                    .option(ChannelOption.SO_BACKLOG, 128)          // (5) some server options
+                    .childOption(ChannelOption.SO_KEEPALIVE, true); // (6) for channel NioServerSocketChannel
 
             // Bind and start to accept incoming connections.
             ChannelFuture f = b.bind(port).sync(); // (7)
