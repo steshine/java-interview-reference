@@ -1,5 +1,6 @@
 package cn.steshine.netty.discard;
 
+import cn.steshine.netty.time.TimeServerHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -26,7 +27,7 @@ public class DiscardServer {
                     .childHandler(new ChannelInitializer<SocketChannel>() { // (4)
                         @Override
                         public void initChannel(SocketChannel ch) throws Exception {
-                            ch.pipeline().addLast(new DiscardServerHandler()); // add some process handler
+                            ch.pipeline().addLast(new TimeServerHandler()); // add some process handler
                         }
                     })
                     .option(ChannelOption.SO_BACKLOG, 128)          // (5) some server options

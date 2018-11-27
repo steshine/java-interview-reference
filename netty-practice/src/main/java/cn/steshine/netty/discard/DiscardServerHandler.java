@@ -9,14 +9,20 @@ public class DiscardServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) { // (2)
         ByteBuf in = (ByteBuf) msg;
-        try {
+        System.out.print(in.toString(io.netty.util.CharsetUtil.US_ASCII));
+        ctx.write(msg);
+        // notice  : it not invoke release() method. because netty release it when it is written out to the wire
+        // notice : ctx.write() dose not written out to wire .it buffed internally
+        ctx.flush();//make message which buffed internally out to wire
+        //in.release();
+        /*try {
             while (in.isReadable()) { // (1)
                 System.out.print((char) in.readByte());
-                System.out.flush();
+                //System.out.flush();
             }
         } finally {
             ReferenceCountUtil.release(msg); // (2)
-        }
+        }*/
     }
 
     @Override
