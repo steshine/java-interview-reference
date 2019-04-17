@@ -69,81 +69,97 @@ public class ThreeSum {
      * @return
      */
     private List<String> hold = new ArrayList<>();
+
     public List<List<Integer>> threeSumV2(int[] nums) {
         List<List<Integer>> list = new ArrayList<>();
-        List<Integer> singleHold = new ArrayList<>();
+        List<Integer> sortedList = new ArrayList<>();
         if (nums.length < 3) {
             return Collections.emptyList();
         }
-        List<Integer> positiveList = new ArrayList<>();
-        List<Integer> negativeList = new ArrayList<>();
-        List<Integer> zeroList = new ArrayList<>();
-        // 先分组
-        for (int i = 0; i < nums.length; i++) {
-            if (nums[i] > 0) {
-                positiveList.add(nums[i]);
-            } else if (nums[i] < 0) {
-                negativeList.add(nums[i]);
-            } else {
-                zeroList.add(nums[i]);
+        int negativeSize = 0;
+        int positiveSize = 0;
+        int zeroSize = 0;
+        for (int i : nums) {
+            if(i>0){
+                positiveSize++;
+            }else if(i<0){
+                negativeSize++;
+            }else {
+                zeroSize++;
             }
+            sortedList.add(i);
         }
-        // 判断不满足条件的数据
-        if (zeroList.size() < 3 && (positiveList.size() < 0 || negativeList.size() < 0)) {
-            return list;
-        }
-        for (int i = 0; i < negativeList.size(); i++) {
-            for (int j = 0; j < positiveList.size(); j++) {
-                int left = negativeList.get(i);
-                int right = positiveList.get(j);
-                int sum = left + right;
-                if(sum > 0){
-                    negativeList.remove(i);
-                    if(negativeList.contains(-sum) && !exist(-sum,left,right)){
-                        list.add(Arrays.asList(left, right, -sum));
-                        record(left, right, -sum);
-                    }
-                    negativeList.add(i,left);
-                }else if(sum < 0 ){
-                    positiveList.remove(j);
-                    if(positiveList.contains(-sum) && !exist(-sum,left,right)){
-                        list.add(Arrays.asList(left, right, -sum));
-                        record(left, right, -sum);
-                    }
-                    positiveList.add(j,right);
-                }else if(zeroList.size() > 0 && !singleHold.contains(positiveList.get(j))) {
-                    list.add(Arrays.asList(left, 0,right));
-                    singleHold.add(positiveList.get(j));
+        Collections.sort(sortedList);
+        int left = 0;
+        int right = sortedList.size() - 1;
+        while (left < right ) {
+            Integer leftValue = sortedList.get(left);
+            Integer rightValue = sortedList.get(right);
+            int sum = leftValue + rightValue;
+            if(sum > 0){
+                int maxNegative = sortedList.get(left) + sortedList.get(left +1 );
+                if(maxNegative + right > 0){
+                    right --;
+                    maxNegative --;
                 }
+            }else if(sum < 0) {
+                int maxPositive  = sortedList.get(right) + sortedList.get(right - 1);
+                if(maxPositive + right < 0){
+                    left --;
+                    positiveSize --;
+                }
+            }else if (sortedList.contains(-sum) && !exist(-sum,leftValue,rightValue)) {
+                list.add(Arrays.asList(leftValue, rightValue, -sum));
+                record(-sum,leftValue,rightValue);
             }
-        }
-        if (zeroList.size() > 0) {
-            if (zeroList.size() > 2) {
-                list.add(Arrays.asList(0, 0, 0));
+            sortedList.remove(left);
+            sortedList.remove(right -1);
+            if (sortedList.contains(-sum) && !exist(-sum,leftValue,rightValue)) {
+                list.add(Arrays.asList(leftValue, rightValue, -sum));
+                record(-sum,leftValue,rightValue);
             }
-        }
+            sortedList.add(left,leftValue);
+            sortedList.add(right ,rightValue);
+            // 移动游标判定
+            if(sum > 0){
+                right--;
+                positiveSize--;
+            }else if(sum < 0){
+                left ++;
+                negativeSize --;
+            }else {
 
+            }
+            if(negativeSize > positiveSize){
+
+            }else {
+                right--;
+                positiveSize--;
+            }
+        }
         return list;
     }
 
-    private boolean exist(int sum,int i ,int j){
+    private boolean exist(int sum, int i, int j) {
         List<Integer> integers = Arrays.asList(sum, i, j);
         Collections.sort(integers);
-        System.out.println(integers.stream().map(a -> a.toString()).collect(Collectors.joining()));
+        //System.out.println(integers.stream().map(a -> a.toString()).collect(Collectors.joining()));
         return hold.contains(integers.toString());
     }
 
-    private void record(int sum,int i ,int j){
+    private void record(int sum, int i, int j) {
         List<Integer> integers = Arrays.asList(sum, i, j);
         Collections.sort(integers);
         hold.add(integers.toString());
     }
 
     public static void main(String[] args) {
-        int[] nums = new int[]{1,2,-2,1};
+        int[] nums = new int[]{-4,-2,-2,-2,0,1,2,2,2,3,3,4,4,6,6};
         ThreeSum threeSum = new ThreeSum();
+        long start = System.currentTimeMillis();
         List<List<Integer>> lists = threeSum.threeSumV2(nums);
-        System.out.println("-------------");
+
         threeSum.print(lists);
+        System.out.println("-------------：size:=" + lists.size() + "cost" + (System.currentTimeMillis() - start));
     }
 }
