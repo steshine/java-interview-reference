@@ -76,57 +76,36 @@ public class ThreeSum {
         if (nums.length < 3) {
             return Collections.emptyList();
         }
-        int negativeSize = 0;
-        int positiveSize = 0;
-        int zeroSize = 0;
         for (int i : nums) {
-            if (i > 0) {
-                positiveSize++;
-            } else if (i < 0) {
-                negativeSize++;
-            } else {
-                zeroSize++;
-            }
             sortedList.add(i);
         }
         Collections.sort(sortedList);
         int left = 0;
         int right = sortedList.size() - 1;
-        while (left < right) {
-            Integer leftValue = sortedList.get(left);
-            Integer rightValue = sortedList.get(right);
-            int sum = leftValue + rightValue;
-            // 符合条件判断
-            sortedList.remove(left);
-            sortedList.remove(right - 1);
-            if (sortedList.contains(-sum) && !exist(-sum, leftValue, rightValue)) {
-                list.add(Arrays.asList(leftValue, rightValue, -sum));
-                record(-sum, leftValue, rightValue);
-            }
-            sortedList.add(left, leftValue);
-            sortedList.add(right, rightValue);
-            // 排除节点判定
-            if (sum >0) {
-                int maxNegative = sortedList.get(left) + sortedList.get(left + 1);
-                if (maxNegative + rightValue >= 0) { // 丢弃最大值
-                    positiveSize--;
-                    sortedList.remove(right);
-                }else {
-                    left = 0;
+        for (int i = 0; i < sortedList.size(); i++) {
+            while (left < right) {
+                int needSum = - sortedList.get(i); // 需要找到两个数组合结果是needSum的bu
+                if(i != left && i != right){
+                    Integer leftValue = sortedList.get(left);
+                    Integer rightValue = sortedList.get(right);
+                    int tmp = leftValue + rightValue;
+                    if (needSum == tmp && !exist(sortedList.get(i), leftValue, rightValue)) {
+                        list.add(Arrays.asList(leftValue, rightValue, sortedList.get(i)));
+                        record(sortedList.get(i), leftValue, rightValue);
+                    }else if(tmp < needSum){
+                        left++;
+                    }else {
+                        right --;
+                    }
+                }else if(i == left){
+                    left++;
+                }else if(i == right){
+                    right --;
                 }
-                right--;
-            } else if(sum < 0){
-                int maxPositive = sortedList.get(right) + sortedList.get(right - 1);
-                if (maxPositive + leftValue <= 0) {// 丢弃最小的值
-                    negativeSize--;
-                    sortedList.remove(left);
-                }else {
-                    right = sortedList.size() -1;
-                }
-                left++;
-            }else {
-                right --;
             }
+            // 归零
+            left = 0;
+            right = sortedList.size() - 1;
         }
         return list;
     }
