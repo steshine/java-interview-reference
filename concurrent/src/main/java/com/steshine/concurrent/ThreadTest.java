@@ -101,12 +101,51 @@ public class ThreadTest {
         }
     }
 
-    public static void main(String[] args) {
-        Data data = new Data();
+    class SampleThread extends Thread {
+        public int processingCount = 0;
+
+        SampleThread(int processingCount) {
+            this.processingCount = processingCount;
+            System.out.println("Thread Created");
+        }
+
+        @Override
+        public void run() {
+            System.out.println("Thread " + this.getName() + " started");
+            while (processingCount > 0) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    System.out.println("Thread " + this.getName() + " interrupted");
+                }
+                processingCount--;
+            }
+            System.out.println("Thread " + this.getName() + " exiting");
+        }
+    }
+
+    public void givenStartedThread_whenJoinCalled_waitsTillCompletion()
+            throws InterruptedException {
+        Thread t2 = new SampleThread(1);
+        t2.start();
+        System.out.println("Invoking join");
+        t2.join();
+        System.out.println("Returned from join");
+        System.out.println(t2.isAlive());
+    }
+
+
+
+    public static void main(String[] args) throws InterruptedException {
+        ThreadTest threadTest = new ThreadTest();
+        threadTest.givenStartedThread_whenJoinCalled_waitsTillCompletion();
+     /*   Data data = new Data();
         Thread sender = new Thread(new Sender(data));
         Thread receiver = new Thread(new Receiver(data));
 
         sender.start();
-        receiver.start();
+        receiver.start();*/
+
+
     }
 }
