@@ -1,8 +1,7 @@
 package com.steshine.leetcode;
 
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
@@ -19,6 +18,10 @@ public class BinaryTree {
         }
     }
 
+    /**
+     * 构造一刻树
+     * @return
+     */
     private TreeNode init() {
         TreeNode node1 = new TreeNode(1);
         TreeNode node2 = new TreeNode(2);
@@ -44,7 +47,9 @@ public class BinaryTree {
 
 
         node6.root = node5;
+        node6.right = node7;
 
+        node7.root = node6;
         return node4;
     }
 
@@ -125,7 +130,7 @@ public class BinaryTree {
         return maxLeafCount;
     }
 
-    public int maxLeafHeight(TreeNode node){
+    public int maxLeafHeight(TreeNode node) {
         BlockingQueue<TreeNode> queue = new ArrayBlockingQueue<>(16);
         int maxLeafHeight = 0;
         // 根节点入队列
@@ -133,7 +138,7 @@ public class BinaryTree {
         while (queue.size() > 0) {
             // 清空队列 ,遍历当前层全部节点
             List<TreeNode> tmp = new ArrayList<>();
-            for(TreeNode treeNode :queue.toArray(new TreeNode[]{})){
+            for (TreeNode treeNode : queue.toArray(new TreeNode[]{})) {
                 if (treeNode.left != null) {
                     tmp.add(treeNode.left);
                 }
@@ -142,29 +147,76 @@ public class BinaryTree {
                 }
             }
             queue.clear();
-            for(TreeNode treeNode : tmp){
+            for (TreeNode treeNode : tmp) {
                 queue.add(treeNode);
             }
-            maxLeafHeight ++;
+            maxLeafHeight++;
         }
         return maxLeafHeight;
     }
 
-    public TreeNode binarySearch(TreeNode node ,int key){
-        if(node != null){
-            System.out.println("当前查找节点："+node.index);
-            if(node.index == key){
-                System.out.println("找到"+node.index);
+    public TreeNode binarySearch(TreeNode node, int key) {
+        if (node != null) {
+            System.out.println("当前查找节点：" + node.index);
+            if (node.index == key) {
+                System.out.println("找到" + node.index);
                 return node;
             }
-            if(node.index > key){
-                return binarySearch(node.left,key);
+            if (node.index > key) {
+                return binarySearch(node.left, key);
             }
-            if(node.index < key){
-                return binarySearch(node.right,key);
+            if (node.index < key) {
+                return binarySearch(node.right, key);
             }
         }
-        throw new IndexOutOfBoundsException("not found this key = "+key);
+        throw new IndexOutOfBoundsException("not found this key = " + key);
+    }
+
+    public TreeNode depthFirstSearch(TreeNode node, int key) {
+        Stack<TreeNode> container = new Stack<>();
+        if (node != null) {
+            container.push(node);
+            while (!container.isEmpty()) {
+                TreeNode treeNode = container.pop();
+                System.out.println("当前查找节点：" + treeNode.index);
+                if (treeNode.index == key) {
+                    System.out.println("找到" + treeNode.index);
+                    return treeNode;
+                }
+                if (treeNode.right != null) {
+                    container.push(treeNode.right);
+                }
+                if (treeNode.left != null) {
+                    container.push(treeNode.left);
+                }
+
+            }
+        }
+        throw new IndexOutOfBoundsException("not found this key = " + key);
+    }
+
+    public TreeNode breadthFirstSearch(TreeNode node, int key) {
+        Queue<TreeNode> queue = new LinkedList<>();
+        if (node != null) {
+            queue.add(node);
+            while (!queue.isEmpty()) {
+                TreeNode treeNode = queue.poll();
+                System.out.println("当前查找节点：" + treeNode.index);
+                if (treeNode.index == key) {
+                    System.out.println("找到" + treeNode.index);
+                    return treeNode;
+                }
+
+                if (treeNode.left != null) {
+                    queue.add(treeNode.left);
+                }
+                if (treeNode.right != null) {
+                    queue.add(treeNode.right);
+                }
+
+            }
+        }
+        throw new IndexOutOfBoundsException("not found this key = " + key);
     }
 
     public static void main(String[] args) {
@@ -180,7 +232,11 @@ public class BinaryTree {
         System.out.println(binaryTree.maxLeafWidth(node));
         System.out.println("最大高度----------------");
         System.out.println(binaryTree.maxLeafHeight(node));
-        System.out.println("查找----------------");
-        System.out.println(binaryTree.binarySearch(node,9).index);
+        System.out.println("二分查找----------------");
+        System.out.println(binaryTree.binarySearch(node, 7).index);
+        System.out.println("DFS查找----------------");
+        System.out.println(binaryTree.depthFirstSearch(node, 7).index);
+        System.out.println("BFS查找----------------");
+        System.out.println(binaryTree.breadthFirstSearch(node, 7).index);
     }
 }
